@@ -2,6 +2,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using LawyerDirectory.Data;
 using LawyerDirectory.Models;
+using System.Xml.Serialization;
+using System.Text;
+using System.Globalization;
 
 namespace LawyerDirectory.Controllers
 {
@@ -112,6 +115,380 @@ namespace LawyerDirectory.Controllers
         public async Task<ActionResult<IEnumerable<Lawyer>>> GetAllLawyers()
         {
             return await _context.Lawyers.OrderBy(l => l.Name).ToListAsync();
+        }
+
+        // ===================================
+        // DATA IMPORT ENDPOINTS
+        // ===================================
+
+        /// <summary>
+        /// POST: api/Lawyers/import/json
+        /// Import lawyers from JSON array
+        /// </summary>
+        /// <param name="lawyersData">Array of lawyer data in JSON format</param>
+        /// <returns>Import result with success/failure counts</returns>
+        [HttpPost("import/json")]
+        [Consumes("application/json")]
+        [ProducesResponseType(typeof(ImportResult), 200)]
+        [ProducesResponseType(400)]
+        public async Task<ActionResult<ImportResult>> ImportFromJson([FromBody] List<LawyerImportDto> lawyersData)
+        {
+            if (lawyersData == null || !lawyersData.Any())
+            {
+                return BadRequest("No lawyer data provided");
+            }
+
+            var result = new ImportResult();
+
+            foreach (var dto in lawyersData)
+            {
+                try
+                {
+                    // Validate the DTO
+                    if (!ModelState.IsValid)
+                    {
+                        result.FailureCount++;
+                        result.Errors.Add($"Validation failed for {dto.Name}: {string.Join(", ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage))}");
+                        continue;
+                    }
+
+                    // Check for duplicates (same name, state, city)
+                    var exists = await _context.Lawyers
+                        .AnyAsync(l => l.Name.ToLower() == dto.Name.ToLower()
+                                    && l.State.ToLower() == dto.State.ToLower()
+                                    && l.City.ToLower() == dto.City.ToLower());
+
+                    if (exists)
+                    {
+                        result.FailureCount++;
+                        result.Errors.Add($"Duplicate: {dto.Name} already exists in {dto.City}, {dto.State}");
+                        continue;
+                    }
+
+                    // Map DTO to entity
+                    var lawyer = new Lawyer
+                    {
+                        Name = dto.Name,
+                        ProfilePictureUrl = dto.ProfilePictureUrl,
+                        AreaOfPractice = dto.AreaOfPractice,
+                        Description = dto.Description,
+                        YearsOfExperience = dto.YearsOfExperience,
+                        State = dto.State,
+                        City = dto.City,
+                        Website = dto.Website,
+                        AmlawRanking = dto.AmlawRanking ?? "NR"
+                    };
+
+                    _context.Lawyers.Add(lawyer);
+                    result.ImportedLawyers.Add(lawyer);
+                    result.SuccessCount++;
+                }
+                catch (Exception ex)
+                {
+                    result.FailureCount++;
+                    result.Errors.Add($"Error importing {dto.Name}: {ex.Message}");
+                }
+            }
+
+            // Save all changes
+            if (result.SuccessCount > 0)
+            {
+                await _context.SaveChangesAsync();
+            }
+
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// POST: api/Lawyers/import/xml
+        /// Import lawyers from XML format
+        /// </summary>
+        /// <param name="xmlContent">XML content as string</param>
+        /// <returns>Import result with success/failure counts</returns>
+        [HttpPost("import/xml")]
+        [Consumes("application/xml", "text/xml")]
+        [ProducesResponseType(typeof(ImportResult), 200)]
+        [ProducesResponseType(400)]
+        public async Task<ActionResult<ImportResult>> ImportFromXml()
+        {
+            try
+            {
+                using var reader = new StreamReader(Request.Body, Encoding.UTF8);
+                var xmlContent = await reader.ReadToEndAsync();
+
+                if (string.IsNullOrWhiteSpace(xmlContent))
+                {
+                    return BadRequest("No XML data provided");
+                }
+
+                // Deserialize XML
+                var serializer = new XmlSerializer(typeof(List<LawyerImportDto>), new XmlRootAttribute("Lawyers"));
+                List<LawyerImportDto> lawyersData;
+
+                using (var stringReader = new StringReader(xmlContent))
+                {
+                    lawyersData = (List<LawyerImportDto>)serializer.Deserialize(stringReader)!;
+                }
+
+                if (lawyersData == null || !lawyersData.Any())
+                {
+                    return BadRequest("No valid lawyer data found in XML");
+                }
+
+                // Use the same import logic as JSON
+                var result = new ImportResult();
+
+                foreach (var dto in lawyersData)
+                {
+                    try
+                    {
+                        // Check for duplicates
+                        var exists = await _context.Lawyers
+                            .AnyAsync(l => l.Name.ToLower() == dto.Name.ToLower()
+                                        && l.State.ToLower() == dto.State.ToLower()
+                                        && l.City.ToLower() == dto.City.ToLower());
+
+                        if (exists)
+                        {
+                            result.FailureCount++;
+                            result.Errors.Add($"Duplicate: {dto.Name} already exists in {dto.City}, {dto.State}");
+                            continue;
+                        }
+
+                        var lawyer = new Lawyer
+                        {
+                            Name = dto.Name,
+                            ProfilePictureUrl = dto.ProfilePictureUrl,
+                            AreaOfPractice = dto.AreaOfPractice,
+                            Description = dto.Description,
+                            YearsOfExperience = dto.YearsOfExperience,
+                            State = dto.State,
+                            City = dto.City,
+                            Website = dto.Website,
+                            AmlawRanking = dto.AmlawRanking ?? "NR"
+                        };
+
+                        _context.Lawyers.Add(lawyer);
+                        result.ImportedLawyers.Add(lawyer);
+                        result.SuccessCount++;
+                    }
+                    catch (Exception ex)
+                    {
+                        result.FailureCount++;
+                        result.Errors.Add($"Error importing {dto.Name}: {ex.Message}");
+                    }
+                }
+
+                if (result.SuccessCount > 0)
+                {
+                    await _context.SaveChangesAsync();
+                }
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Failed to parse XML: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// POST: api/Lawyers/import/csv
+        /// Import lawyers from CSV file
+        /// Expected columns: Name, ProfilePictureUrl, AreaOfPractice, Description, YearsOfExperience, State, City, Website, AmlawRanking
+        /// </summary>
+        /// <param name="file">CSV file</param>
+        /// <returns>Import result with success/failure counts</returns>
+        [HttpPost("import/csv")]
+        [Consumes("multipart/form-data")]
+        [ProducesResponseType(typeof(ImportResult), 200)]
+        [ProducesResponseType(400)]
+        public async Task<ActionResult<ImportResult>> ImportFromCsv(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+            {
+                return BadRequest("No file uploaded");
+            }
+
+            if (!file.FileName.EndsWith(".csv", StringComparison.OrdinalIgnoreCase))
+            {
+                return BadRequest("File must be a CSV file");
+            }
+
+            var result = new ImportResult();
+
+            try
+            {
+                using var reader = new StreamReader(file.OpenReadStream());
+
+                // Read header line
+                var headerLine = await reader.ReadLineAsync();
+                if (string.IsNullOrWhiteSpace(headerLine))
+                {
+                    return BadRequest("CSV file is empty");
+                }
+
+                var headers = headerLine.Split(',').Select(h => h.Trim().Trim('"')).ToList();
+
+                // Validate required columns
+                var requiredColumns = new[] { "Name", "AreaOfPractice", "Description", "YearsOfExperience", "State", "City" };
+                var missingColumns = requiredColumns.Where(rc => !headers.Any(h => h.Equals(rc, StringComparison.OrdinalIgnoreCase))).ToList();
+
+                if (missingColumns.Any())
+                {
+                    return BadRequest($"Missing required columns: {string.Join(", ", missingColumns)}");
+                }
+
+                // Create column index map (case-insensitive)
+                var columnMap = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+                for (int i = 0; i < headers.Count; i++)
+                {
+                    columnMap[headers[i]] = i;
+                }
+
+                int lineNumber = 1;
+
+                // Read data lines
+                while (!reader.EndOfStream)
+                {
+                    lineNumber++;
+                    var line = await reader.ReadLineAsync();
+
+                    if (string.IsNullOrWhiteSpace(line))
+                        continue;
+
+                    try
+                    {
+                        var values = ParseCsvLine(line);
+
+                        if (values.Count < headers.Count)
+                        {
+                            result.FailureCount++;
+                            result.Errors.Add($"Line {lineNumber}: Invalid number of columns");
+                            continue;
+                        }
+
+                        var dto = new LawyerImportDto
+                        {
+                            Name = GetCsvValue(values, columnMap, "Name"),
+                            ProfilePictureUrl = GetCsvValue(values, columnMap, "ProfilePictureUrl"),
+                            AreaOfPractice = GetCsvValue(values, columnMap, "AreaOfPractice"),
+                            Description = GetCsvValue(values, columnMap, "Description"),
+                            State = GetCsvValue(values, columnMap, "State"),
+                            City = GetCsvValue(values, columnMap, "City"),
+                            Website = GetCsvValue(values, columnMap, "Website"),
+                            AmlawRanking = GetCsvValue(values, columnMap, "AmlawRanking") ?? "NR"
+                        };
+
+                        // Parse years of experience
+                        var yearsStr = GetCsvValue(values, columnMap, "YearsOfExperience");
+                        if (!int.TryParse(yearsStr, out int years) || years < 0 || years > 100)
+                        {
+                            result.FailureCount++;
+                            result.Errors.Add($"Line {lineNumber}: Invalid YearsOfExperience value '{yearsStr}'");
+                            continue;
+                        }
+                        dto.YearsOfExperience = years;
+
+                        // Validate required fields
+                        if (string.IsNullOrWhiteSpace(dto.Name) || string.IsNullOrWhiteSpace(dto.AreaOfPractice) ||
+                            string.IsNullOrWhiteSpace(dto.Description) || string.IsNullOrWhiteSpace(dto.State) ||
+                            string.IsNullOrWhiteSpace(dto.City))
+                        {
+                            result.FailureCount++;
+                            result.Errors.Add($"Line {lineNumber}: Missing required fields");
+                            continue;
+                        }
+
+                        // Check for duplicates
+                        var exists = await _context.Lawyers
+                            .AnyAsync(l => l.Name.ToLower() == dto.Name.ToLower()
+                                        && l.State.ToLower() == dto.State.ToLower()
+                                        && l.City.ToLower() == dto.City.ToLower());
+
+                        if (exists)
+                        {
+                            result.FailureCount++;
+                            result.Errors.Add($"Line {lineNumber}: Duplicate - {dto.Name} already exists in {dto.City}, {dto.State}");
+                            continue;
+                        }
+
+                        var lawyer = new Lawyer
+                        {
+                            Name = dto.Name,
+                            ProfilePictureUrl = dto.ProfilePictureUrl,
+                            AreaOfPractice = dto.AreaOfPractice,
+                            Description = dto.Description,
+                            YearsOfExperience = dto.YearsOfExperience,
+                            State = dto.State,
+                            City = dto.City,
+                            Website = dto.Website,
+                            AmlawRanking = dto.AmlawRanking
+                        };
+
+                        _context.Lawyers.Add(lawyer);
+                        result.ImportedLawyers.Add(lawyer);
+                        result.SuccessCount++;
+                    }
+                    catch (Exception ex)
+                    {
+                        result.FailureCount++;
+                        result.Errors.Add($"Line {lineNumber}: {ex.Message}");
+                    }
+                }
+
+                if (result.SuccessCount > 0)
+                {
+                    await _context.SaveChangesAsync();
+                }
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Failed to process CSV file: {ex.Message}");
+            }
+        }
+
+        // Helper method to parse CSV line (handles quoted values with commas)
+        private List<string> ParseCsvLine(string line)
+        {
+            var values = new List<string>();
+            var currentValue = new StringBuilder();
+            bool inQuotes = false;
+
+            for (int i = 0; i < line.Length; i++)
+            {
+                char c = line[i];
+
+                if (c == '"')
+                {
+                    inQuotes = !inQuotes;
+                }
+                else if (c == ',' && !inQuotes)
+                {
+                    values.Add(currentValue.ToString().Trim());
+                    currentValue.Clear();
+                }
+                else
+                {
+                    currentValue.Append(c);
+                }
+            }
+
+            values.Add(currentValue.ToString().Trim());
+            return values;
+        }
+
+        // Helper method to get CSV value by column name
+        private string? GetCsvValue(List<string> values, Dictionary<string, int> columnMap, string columnName)
+        {
+            if (columnMap.TryGetValue(columnName, out int index) && index < values.Count)
+            {
+                var value = values[index].Trim().Trim('"');
+                return string.IsNullOrWhiteSpace(value) ? null : value;
+            }
+            return null;
         }
     }
 }

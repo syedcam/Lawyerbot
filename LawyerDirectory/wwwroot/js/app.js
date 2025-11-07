@@ -14,7 +14,7 @@ const resultsBody = document.getElementById('resultsBody');
 const resultCount = document.getElementById('resultCount');
 const noResults = document.getElementById('noResults');
 const loading = document.getElementById('loading');
-const practiceList = document.getElementById('practiceList');
+const areaOfPracticeSelect = document.getElementById('areaOfPractice');
 
 // Initialize the app
 document.addEventListener('DOMContentLoaded', () => {
@@ -59,14 +59,16 @@ async function loadPracticeAreas() {
         const response = await fetch(`${API_BASE}/practices`);
         const practices = await response.json();
 
-        practiceList.innerHTML = '';
+        areaOfPracticeSelect.innerHTML = '<option value="">-- All Practice Areas --</option>';
         practices.forEach(practice => {
             const option = document.createElement('option');
             option.value = practice;
-            practiceList.appendChild(option);
+            option.textContent = practice;
+            areaOfPracticeSelect.appendChild(option);
         });
     } catch (error) {
         console.error('Error loading practice areas:', error);
+        showError('Failed to load practice areas. Please refresh the page.');
     }
 }
 

@@ -1,0 +1,35 @@
+[
+  {
+    "name": "Alexandra Thompson",
+    "profilePictureUrl": "https://i.pravatar.cc/150?img=25",
+    "areaOfPractice": "Environmental Law, Sustainability",
+    "description": "Passionate environmental attorney helping corporations achieve sustainability goals while maintaining regulatory compliance.",
+    "yearsOfExperience": 9,
+    "state": "Oregon",
+    "city": "Portland",
+    "website": "https://www.thompsonenviro.law",
+    "amlawRanking": "NR"
+  },
+  {
+    "name": "Marcus Chen",
+    "profilePictureUrl": "https://i.pravatar.cc/150?img=26",
+    "areaOfPractice": "Cryptocurrency Law, FinTech",
+    "description": "Leading expert in cryptocurrency regulation and blockchain technology legal frameworks.",
+    "yearsOfExperience": 6,
+    "state": "Nevada",
+    "city": "Las Vegas",
+    "website": "https://www.chencrypto.legal",
+    "amlawRanking": "NR"
+  },
+  {
+    "name": "Dr. Sarah Mitchell",
+    "profilePictureUrl": "https://i.pravatar.cc/150?img=27",
+    "areaOfPractice": "Medical Malpractice, Healthcare Law",
+    "description": "Former medical doctor turned attorney specializing in complex medical malpractice cases.",
+    "yearsOfExperience": 15,
+    "state": "Pennsylvania",
+    "city": "Philadelphia",
+    "website": "https://www.mitchellmedlaw.com",
+    "amlawRanking": "200"
+  }
+]

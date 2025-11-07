@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Lawyers>
+  <LawyerImportDto>
+    <Name>Alexandra Thompson</Name>
+    <ProfilePictureUrl>https://i.pravatar.cc/150?img=25</ProfilePictureUrl>
+    <AreaOfPractice>Environmental Law, Sustainability</AreaOfPractice>
+    <Description>Passionate environmental attorney helping corporations achieve sustainability goals while maintaining regulatory compliance.</Description>
+    <YearsOfExperience>9</YearsOfExperience>
+    <State>Oregon</State>
+    <City>Portland</City>
+    <Website>https://www.thompsonenviro.law</Website>
+    <AmlawRanking>NR</AmlawRanking>
+  </LawyerImportDto>
+  <LawyerImportDto>
+    <Name>Marcus Chen</Name>
+    <ProfilePictureUrl>https://i.pravatar.cc/150?img=26</ProfilePictureUrl>
+    <AreaOfPractice>Cryptocurrency Law, FinTech</AreaOfPractice>
+    <Description>Leading expert in cryptocurrency regulation and blockchain technology legal frameworks.</Description>
+    <YearsOfExperience>6</YearsOfExperience>
+    <State>Nevada</State>
+    <City>Las Vegas</City>
+    <Website>https://www.chencrypto.legal</Website>
+    <AmlawRanking>NR</AmlawRanking>
+  </LawyerImportDto>
+  <LawyerImportDto>
+    <Name>Dr. Sarah Mitchell</Name>
+    <ProfilePictureUrl>https://i.pravatar.cc/150?img=27</ProfilePictureUrl>
+    <AreaOfPractice>Medical Malpractice, Healthcare Law</AreaOfPractice>
+    <Description>Former medical doctor turned attorney specializing in complex medical malpractice cases.</Description>
+    <YearsOfExperience>15</YearsOfExperience>
+    <State>Pennsylvania</State>
+    <City>Philadelphia</City>
+    <Website>https://www.mitchellmedlaw.com</Website>
+    <AmlawRanking>200</AmlawRanking>
+  </LawyerImportDto>
+</Lawyers>
