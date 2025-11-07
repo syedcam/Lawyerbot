@@ -193,15 +193,17 @@ async def get_all_lawyers():
     """Get all lawyers"""
     return sorted(LAWYERS, key=lambda x: x["name"])
 
-# Serve static files
-static_path = "/home/user/Lawyerbot/LawyerDirectory/wwwroot"
-app.mount("/css", StaticFiles(directory=f"{static_path}/css"), name="css")
-app.mount("/js", StaticFiles(directory=f"{static_path}/js"), name="js")
+# Serve static files - use relative path from script location
+import os
+script_dir = os.path.dirname(os.path.abspath(__file__))
+static_path = os.path.join(script_dir, "LawyerDirectory", "wwwroot")
+app.mount("/css", StaticFiles(directory=os.path.join(static_path, "css")), name="css")
+app.mount("/js", StaticFiles(directory=os.path.join(static_path, "js")), name="js")
 
 @app.get("/")
 async def serve_index():
     """Serve the main index.html file"""
-    return FileResponse(f"{static_path}/index.html")
+    return FileResponse(os.path.join(static_path, "index.html"))
 
 if __name__ == "__main__":
     import uvicorn
