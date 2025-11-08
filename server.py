@@ -208,6 +208,6 @@ async def serve_index():
 if __name__ == "__main__":
     import uvicorn
     print("🚀 Starting Lawyer Directory Server...")
-    print("📍 Open your browser to: http://localhost:5000")
+    print("📍 Open your browser to: http://localhost:8000")
     print("🎨 The modern black/white theme should now be visible!")
-    uvicorn.run(app, host="0.0.0.0", port=5000)
+    uvicorn.run(app, host="0.0.0.0", port=8000)
