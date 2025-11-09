@@ -195,6 +195,14 @@ async def get_all_lawyers():
     """Get all lawyers"""
     return sorted(LAWYERS, key=lambda x: x["name"])
 
+@app.get("/api/lawyers/{lawyer_id}")
+async def get_lawyer_by_id(lawyer_id: int):
+    """Get a single lawyer by ID"""
+    for lawyer in LAWYERS:
+        if lawyer["id"] == lawyer_id:
+            return lawyer
+    return {"error": "Lawyer not found"}
+
 # Serve static files - use relative path from script location
 import os
 script_dir = os.path.dirname(os.path.abspath(__file__))

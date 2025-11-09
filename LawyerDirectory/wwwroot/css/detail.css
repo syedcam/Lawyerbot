@@ -1,0 +1,112 @@
+/* Detail Page Specific Styles */
+
+.detail-actions {
+    padding: 20px 30px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.lawyer-detail {
+    padding: 40px 30px;
+}
+
+.detail-photo-section {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.detail-photo {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 5px solid #1a1a1a;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.detail-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.detail-field {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 12px;
+    border: 2px solid #e9ecef;
+    transition: all 0.3s ease;
+}
+
+.detail-field:hover {
+    border-color: #1a1a1a;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.detail-field.full-width {
+    grid-column: 1 / -1;
+}
+
+.detail-field label {
+    display: block;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 10px;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.detail-field p {
+    font-size: 1.1rem;
+    color: #495057;
+    margin: 0;
+    word-wrap: break-word;
+}
+
+.detail-field a {
+    color: #1a1a1a;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s ease;
+}
+
+.detail-field a:hover {
+    color: #000;
+    text-decoration: underline;
+}
+
+/* Make picture and name clickable in main table */
+.clickable {
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.lawyer-photo.clickable:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+}
+
+.lawyer-name.clickable:hover {
+    color: #000;
+    text-decoration: underline;
+}
+
+/* Mobile Responsive */
+@media screen and (max-width: 768px) {
+    .detail-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .detail-photo {
+        width: 150px;
+        height: 150px;
+    }
+
+    .detail-actions,
+    .lawyer-detail {
+        padding: 20px 15px;
+    }
+}
