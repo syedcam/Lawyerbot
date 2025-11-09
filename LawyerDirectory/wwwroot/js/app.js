@@ -203,10 +203,11 @@ function createLawyerRow(lawyer) {
         <td data-label="Picture">
             <img src="${lawyer.profilePictureUrl || 'https://via.placeholder.com/60'}"
                  alt="${lawyer.name}"
-                 class="lawyer-photo"
+                 class="lawyer-photo clickable"
+                 data-lawyer-id="${lawyer.id}"
                  onerror="this.src='https://via.placeholder.com/60?text=No+Image'">
         </td>
-        <td data-label="Name" class="lawyer-name">${escapeHtml(lawyer.name)}</td>
+        <td data-label="Name" class="lawyer-name clickable" data-lawyer-id="${lawyer.id}">${escapeHtml(lawyer.name)}</td>
         <td data-label="Area of Practice" class="practice-area">${escapeHtml(lawyer.areaOfPractice)}</td>
         <td data-label="Description" class="description">${escapeHtml(lawyer.description)}</td>
         <td data-label="Years of Experience">
@@ -224,7 +225,19 @@ function createLawyerRow(lawyer) {
         </td>
     `;
 
+    // Add click event listeners to picture and name
+    const photo = row.querySelector('.lawyer-photo');
+    const name = row.querySelector('.lawyer-name');
+
+    photo.addEventListener('click', () => openLawyerDetail(lawyer.id));
+    name.addEventListener('click', () => openLawyerDetail(lawyer.id));
+
     return row;
+}
+
+// Open lawyer detail page in new tab
+function openLawyerDetail(lawyerId) {
+    window.open(`/detail.html?id=${lawyerId}`, '_blank');
 }
 
 // Reset Form

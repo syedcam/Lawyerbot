@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lawyer Details - Lawyer Directory</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/detail.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏛️ Lawyer Directory</h1>
+            <p class="subtitle">Lawyer Details</p>
+        </header>
+
+        <!-- Back Button -->
+        <div class="detail-actions">
+            <button onclick="window.close()" class="btn btn-secondary">← Back to Search</button>
+        </div>
+
+        <!-- Loading Spinner -->
+        <div id="loading" class="loading" style="display: block;">
+            <div class="spinner"></div>
+            <p>Loading lawyer details...</p>
+        </div>
+
+        <!-- Lawyer Detail Section -->
+        <div id="lawyerDetail" class="lawyer-detail" style="display: none;">
+            <!-- Picture -->
+            <div class="detail-photo-section">
+                <img id="lawyerPhoto" src="" alt="Lawyer Photo" class="detail-photo">
+            </div>
+
+            <!-- Information Grid -->
+            <div class="detail-grid">
+                <div class="detail-field">
+                    <label>First Name</label>
+                    <p id="firstName"></p>
+                </div>
+
+                <div class="detail-field">
+                    <label>Last Name</label>
+                    <p id="lastName"></p>
+                </div>
+
+                <div class="detail-field">
+                    <label>Law Firm</label>
+                    <p id="company"></p>
+                </div>
+
+                <div class="detail-field">
+                    <label>Email</label>
+                    <p id="email"></p>
+                </div>
+
+                <div class="detail-field">
+                    <label>Phone Number</label>
+                    <p id="phone"></p>
+                </div>
+
+                <div class="detail-field">
+                    <label>Area of Practice</label>
+                    <p id="areaOfPractice"></p>
+                </div>
+
+                <div class="detail-field">
+                    <label>Years of Experience</label>
+                    <p id="yearsOfExperience"></p>
+                </div>
+
+                <div class="detail-field">
+                    <label>City</label>
+                    <p id="city"></p>
+                </div>
+
+                <div class="detail-field">
+                    <label>State</label>
+                    <p id="state"></p>
+                </div>
+
+                <div class="detail-field">
+                    <label>AmLaw Ranking</label>
+                    <p id="amlawRanking"></p>
+                </div>
+
+                <div class="detail-field full-width">
+                    <label>LinkedIn Profile</label>
+                    <p id="linkedinUrl"></p>
+                </div>
+
+                <div class="detail-field full-width">
+                    <label>Company Profile</label>
+                    <p id="companyProfileUrl"></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Error Message -->
+        <div id="errorMessage" class="error-message" style="display: none;">
+            <p>Lawyer not found or error loading details.</p>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Lawyer Directory. All rights reserved.</p>
+    </footer>
+
+    <script src="js/detail.js"></script>
+</body>
+</html>
