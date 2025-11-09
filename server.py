@@ -73,8 +73,8 @@ def load_lawyers_from_csv():
 
     try:
         with open(csv_path, 'r', encoding='utf-8') as f:
-            # CSV is tab-delimited
-            reader = csv.DictReader(f, delimiter='\t')
+            # CSV is comma-delimited
+            reader = csv.DictReader(f, delimiter=',')
 
             for idx, row in enumerate(reader, 1):
                 first_name = row.get('First Name', '').strip()
