@@ -215,6 +215,11 @@ async def serve_index():
     """Serve the main index.html file"""
     return FileResponse(os.path.join(static_path, "index.html"))
 
+@app.get("/detail.html")
+async def serve_detail():
+    """Serve the detail.html file"""
+    return FileResponse(os.path.join(static_path, "detail.html"))
+
 if __name__ == "__main__":
     import uvicorn
     print("🚀 Starting Lawyer Directory Server...")
