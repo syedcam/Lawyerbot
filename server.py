@@ -54,8 +54,9 @@ def parse_amlaw_rank(rank_str):
         return "NR"
 
     rank_str = str(rank_str).strip()
+    # Return just the number, not "Top {number}"
     if rank_str.isdigit():
-        return f"Top {rank_str}"
+        return rank_str
     return rank_str
 
 def load_lawyers_from_csv():
