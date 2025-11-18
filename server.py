@@ -64,7 +64,7 @@ def load_lawyers_from_csv():
     global LAWYERS
     LAWYERS = []
 
-    csv_path = os.path.join(os.path.dirname(__file__), "Masterlist_L.A_LaborEmployment.csv")
+    csv_path = os.path.join(os.path.dirname(__file__), "Lsearch_Masterlist_L.A_LaborEmployment_updated.csv")
 
     if not os.path.exists(csv_path):
         print(f"Warning: CSV file not found at {csv_path}")
@@ -84,11 +84,18 @@ def load_lawyers_from_csv():
                 if not first_name or not last_name:
                     continue
 
+                # Get profile picture URL from CSV, or use blank if not available
+                profile_pic = row.get('Profile Picture', '').strip()
+                if not profile_pic:
+                    # Use a blank/black image for missing pictures
+                    profile_pic = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="150" height="150"%3E%3Crect width="150" height="150" fill="%23000000"/%3E%3C/svg%3E'
+
                 lawyer = {
                     "id": idx,
                     "name": f"{first_name} {last_name}",
                     "firstName": first_name,
                     "lastName": last_name,
+                    "title": row.get('Title', '').strip(),
                     "company": row.get('Company', '').strip(),
                     "email": row.get('Official Email', '').strip(),
                     "phone": row.get('Phone Number', '').strip(),
@@ -96,7 +103,7 @@ def load_lawyers_from_csv():
                     "companyProfileUrl": row.get('Link to Company Profile', '').strip(),
                     "areaOfPractice": "Labor and Employment",
                     "description": "",  # Can be populated from company profile later
-                    "profilePictureUrl": f"https://i.pravatar.cc/150?img={idx % 70}",
+                    "profilePictureUrl": profile_pic,
                     "yearsOfExperience": extract_years(row.get('Yrs of Exp.', '0')),
                     "city": clean_city(row.get('City', '')),
                     "state": clean_state(row.get('State', '')),
