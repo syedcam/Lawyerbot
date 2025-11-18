@@ -201,11 +201,11 @@ function createLawyerRow(lawyer) {
 
     row.innerHTML = `
         <td data-label="Picture">
-            <img src="${lawyer.profilePictureUrl || 'https://via.placeholder.com/60'}"
+            <img src="${lawyer.profilePictureUrl || 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2260%22 height=%2260%22%3E%3Crect width=%2260%22 height=%2260%22 fill=%22%23000000%22/%3E%3C/svg%3E'}"
                  alt="${lawyer.name}"
                  class="lawyer-photo clickable"
                  data-lawyer-id="${lawyer.id}"
-                 onerror="this.src='https://via.placeholder.com/60?text=No+Image'">
+                 onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2260%22 height=%2260%22%3E%3Crect width=%2260%22 height=%2260%22 fill=%22%23000000%22/%3E%3C/svg%3E'">
         </td>
         <td data-label="Name" class="lawyer-name clickable" data-lawyer-id="${lawyer.id}">${escapeHtml(lawyer.name)}</td>
         <td data-label="Area of Practice" class="practice-area">${escapeHtml(lawyer.areaOfPractice)}</td>
