@@ -59,6 +59,7 @@ function displayLawyer(lawyer) {
     // Set text fields
     document.getElementById('firstName').textContent = lawyer.firstName || 'N/A';
     document.getElementById('lastName').textContent = lawyer.lastName || 'N/A';
+    document.getElementById('title').textContent = lawyer.title || 'N/A';
     document.getElementById('company').textContent = lawyer.company || 'N/A';
     document.getElementById('email').innerHTML = lawyer.email
         ? `<a href="mailto:${lawyer.email}">${lawyer.email}</a>`
@@ -66,13 +67,14 @@ function displayLawyer(lawyer) {
     document.getElementById('phone').innerHTML = lawyer.phone
         ? `<a href="tel:${lawyer.phone}">${lawyer.phone}</a>`
         : 'N/A';
-    document.getElementById('areaOfPractice').textContent = lawyer.areaOfPractice || 'N/A';
+    document.getElementById('practiceArea').textContent = lawyer.practiceArea || lawyer.areaOfPractice || 'N/A';
     document.getElementById('yearsOfExperience').textContent = lawyer.yearsOfExperience
         ? `${lawyer.yearsOfExperience} years`
         : 'N/A';
+    document.getElementById('durationInCurrentRole').textContent = lawyer.durationInCurrentRole || 'N/A';
     document.getElementById('city').textContent = lawyer.city || 'N/A';
     document.getElementById('state').textContent = lawyer.state || 'N/A';
-    document.getElementById('amlawRanking').textContent = lawyer.amlawRanking || 'NR';
+    document.getElementById('amlawRanking').textContent = lawyer.amlawRanking || 'Not Rated';
 
     // Set LinkedIn URL
     if (lawyer.linkedinUrl) {
