@@ -106,7 +106,7 @@ def load_lawyers_from_csv():
                     "areaOfPractice": row.get('Practice Area', '').strip() or "Labor and Employment",
                     "description": "",  # Can be populated from company profile later
                     "profilePictureUrl": profile_pic,
-                    "yearsOfExperience": extract_years(row.get('Yrs of Exp.', '0')),
+                    "yearsOfExperience": extract_years(row.get('Years of Experience', '0')),
                     "city": clean_city(row.get('City', '')),
                     "state": clean_state(row.get('State', '')),
                     "amlawRanking": parse_amlaw_rank(row.get('Amlaw Rank', 'NR')),
