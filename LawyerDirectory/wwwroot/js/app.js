@@ -201,11 +201,13 @@ function createLawyerRow(lawyer) {
 
     row.innerHTML = `
         <td data-label="Picture">
-            <img src="${lawyer.profilePictureUrl || 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2260%22 height=%2260%22%3E%3Crect width=%2260%22 height=%2260%22 fill=%22%23000000%22/%3E%3C/svg%3E'}"
-                 alt="${lawyer.name}"
-                 class="lawyer-photo clickable"
-                 data-lawyer-id="${lawyer.id}"
-                 onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2260%22 height=%2260%22%3E%3Crect width=%2260%22 height=%2260%22 fill=%22%23000000%22/%3E%3C/svg%3E'">
+            ${lawyer.profilePictureUrl
+                ? `<img src="${lawyer.profilePictureUrl}"
+                     alt="${lawyer.name}"
+                     class="lawyer-photo clickable"
+                     data-lawyer-id="${lawyer.id}"
+                     onerror="this.style.display='none'">`
+                : ''}
         </td>
         <td data-label="Name" class="lawyer-name clickable" data-lawyer-id="${lawyer.id}">${escapeHtml(lawyer.name)}</td>
         <td data-label="Area of Practice" class="practice-area">${escapeHtml(lawyer.areaOfPractice)}</td>
@@ -221,15 +223,17 @@ function createLawyerRow(lawyer) {
                 : 'N/A'}
         </td>
         <td data-label="AmLaw Ranking">
-            <span class="ranking ${lawyer.amlawRanking === 'NR' ? 'nr' : ''}">${escapeHtml(lawyer.amlawRanking)}</span>
+            <span class="ranking ${lawyer.amlawRanking === 'Not Rated' ? 'nr' : ''}">${escapeHtml(lawyer.amlawRanking)}</span>
         </td>
     `;
 
-    // Add click event listeners to picture and name
+    // Add click event listeners to picture (if present) and name
     const photo = row.querySelector('.lawyer-photo');
     const name = row.querySelector('.lawyer-name');
 
-    photo.addEventListener('click', () => openLawyerDetail(lawyer.id));
+    if (photo) {
+        photo.addEventListener('click', () => openLawyerDetail(lawyer.id));
+    }
     name.addEventListener('click', () => openLawyerDetail(lawyer.id));
 
     return row;
