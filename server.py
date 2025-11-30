@@ -36,6 +36,8 @@ def clean_state(state):
         return "California"
     if state == "NY":
         return "New York"
+    if state == "IL":
+        return "Illinois"
     # Add more state mappings as needed
     return state
 
@@ -145,6 +147,11 @@ def load_lawyers_from_csv():
     next_id = len(LAWYERS) + 1
     ny_lawyers = load_lawyers_from_csv_file("NY_MandA_updated_FromCooley-Final.csv", starting_id=next_id)
     LAWYERS.extend(ny_lawyers)
+
+    # Load Chicago lawyers - continue ID sequence
+    next_id = len(LAWYERS) + 1
+    chicago_lawyers = load_lawyers_from_csv_file("Chicago_MandA_Chicago_4-6y.csv", starting_id=next_id)
+    LAWYERS.extend(chicago_lawyers)
 
     # If no data loaded, use sample data
     if len(LAWYERS) == 0:
