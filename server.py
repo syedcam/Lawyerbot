@@ -34,6 +34,8 @@ def clean_state(state):
     state = state.strip()
     if state == "CA":
         return "California"
+    if state == "NY":
+        return "New York"
     # Add more state mappings as needed
     return state
 
@@ -88,6 +90,11 @@ def load_lawyers_from_csv_file(csv_filename, starting_id=1):
                 if not profile_pic:
                     profile_pic = ""
 
+                # Handle both "Phone Number" and "Phone Number_old" column names
+                phone = row.get('Phone Number', '').strip()
+                if not phone:
+                    phone = row.get('Phone Number_old', '').strip()
+
                 lawyer = {
                     "id": idx,
                     "name": f"{first_name} {last_name}",
@@ -96,7 +103,7 @@ def load_lawyers_from_csv_file(csv_filename, starting_id=1):
                     "title": row.get('Title', '').strip(),
                     "company": row.get('Company', '').strip(),
                     "email": row.get('Official Email', '').strip(),
-                    "phone": row.get('Phone Number', '').strip(),
+                    "phone": phone,
                     "linkedinUrl": row.get('Person Linkedin Url', '').strip(),
                     "companyProfileUrl": row.get('Link to Company Profile', '').strip(),
                     "practiceArea": row.get('Practice Area', '').strip() or "Labor and Employment",
@@ -133,6 +140,11 @@ def load_lawyers_from_csv():
     next_id = len(LAWYERS) + 1
     sf_lawyers = load_lawyers_from_csv_file("Final_SFO_Lsearch_Masterlist_LaborEmployment_updated.csv", starting_id=next_id)
     LAWYERS.extend(sf_lawyers)
+
+    # Load New York lawyers - continue ID sequence
+    next_id = len(LAWYERS) + 1
+    ny_lawyers = load_lawyers_from_csv_file("NY_MandA_updated_FromCooley-Final.csv", starting_id=next_id)
+    LAWYERS.extend(ny_lawyers)
 
     # If no data loaded, use sample data
     if len(LAWYERS) == 0:
