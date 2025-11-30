@@ -43,13 +43,18 @@ function displayLawyer(lawyer) {
     loading.style.display = 'none';
     lawyerDetail.style.display = 'block';
 
-    // Set photo - use black square if no picture available
-    const photoUrl = lawyer.profilePictureUrl || 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22%3E%3Crect width=%22200%22 height=%22200%22 fill=%22%23000000%22/%3E%3C/svg%3E';
-    document.getElementById('lawyerPhoto').src = photoUrl;
-    document.getElementById('lawyerPhoto').alt = lawyer.name;
-    document.getElementById('lawyerPhoto').onerror = function() {
-        this.src = 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22%3E%3Crect width=%22200%22 height=%22200%22 fill=%22%23000000%22/%3E%3C/svg%3E';
-    };
+    // Set photo - hide if no picture available
+    const photoElement = document.getElementById('lawyerPhoto');
+    if (lawyer.profilePictureUrl) {
+        photoElement.src = lawyer.profilePictureUrl;
+        photoElement.alt = lawyer.name;
+        photoElement.onerror = function() {
+            this.style.display = 'none';
+        };
+        photoElement.style.display = 'block';
+    } else {
+        photoElement.style.display = 'none';
+    }
 
     // Set text fields
     document.getElementById('firstName').textContent = lawyer.firstName || 'N/A';

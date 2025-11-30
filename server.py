@@ -50,8 +50,8 @@ def extract_years(years_str):
 
 def parse_amlaw_rank(rank_str):
     """Parse AmLaw ranking"""
-    if not rank_str or rank_str == "-" or rank_str == "":
-        return "NR"
+    if not rank_str or rank_str == "-" or rank_str == "" or rank_str == "0":
+        return "Not Rated"
 
     rank_str = str(rank_str).strip()
     # Return just the number, not "Top {number}"
@@ -64,7 +64,7 @@ def load_lawyers_from_csv():
     global LAWYERS
     LAWYERS = []
 
-    csv_path = os.path.join(os.path.dirname(__file__), "Lsearch_Masterlist_L.A_LaborEmployment_updated.csv")
+    csv_path = os.path.join(os.path.dirname(__file__), "LA_Lsearch_Masterlist_LaborEmployment_updated.csv")
 
     if not os.path.exists(csv_path):
         print(f"Warning: CSV file not found at {csv_path}")
@@ -84,11 +84,11 @@ def load_lawyers_from_csv():
                 if not first_name or not last_name:
                     continue
 
-                # Get profile picture URL from CSV, or use blank if not available
+                # Get profile picture URL from CSV, or leave empty if not available
                 profile_pic = row.get('Profile Picture', '').strip()
+                # Don't use placeholder - just leave empty if no picture
                 if not profile_pic:
-                    # Use a blank/black image for missing pictures
-                    profile_pic = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="150" height="150"%3E%3Crect width="150" height="150" fill="%23000000"/%3E%3C/svg%3E'
+                    profile_pic = ""
 
                 lawyer = {
                     "id": idx,
@@ -101,7 +101,9 @@ def load_lawyers_from_csv():
                     "phone": row.get('Phone Number', '').strip(),
                     "linkedinUrl": row.get('Person Linkedin Url', '').strip(),
                     "companyProfileUrl": row.get('Link to Company Profile', '').strip(),
-                    "areaOfPractice": "Labor and Employment",
+                    "practiceArea": row.get('Practice Area', '').strip() or "Labor and Employment",
+                    "durationInCurrentRole": row.get('Duration in Current Role', '').strip(),
+                    "areaOfPractice": row.get('Practice Area', '').strip() or "Labor and Employment",
                     "description": "",  # Can be populated from company profile later
                     "profilePictureUrl": profile_pic,
                     "yearsOfExperience": extract_years(row.get('Yrs of Exp.', '0')),
