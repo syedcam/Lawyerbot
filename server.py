@@ -23,6 +23,8 @@ def clean_city(city):
     city = city.strip()
     if city in ["L.A", "L.A."]:
         return "Los Angeles"
+    if city in ["SFO", "SF", "S.F", "S.F."]:
+        return "San Francisco"
     return city
 
 def clean_state(state):
@@ -59,25 +61,21 @@ def parse_amlaw_rank(rank_str):
         return rank_str
     return rank_str
 
-def load_lawyers_from_csv():
-    """Load lawyer data from CSV file"""
-    global LAWYERS
-    LAWYERS = []
-
-    csv_path = os.path.join(os.path.dirname(__file__), "LA_Lsearch_Masterlist_LaborEmployment_updated.csv")
+def load_lawyers_from_csv_file(csv_filename, starting_id=1):
+    """Load lawyer data from a single CSV file"""
+    lawyers = []
+    csv_path = os.path.join(os.path.dirname(__file__), csv_filename)
 
     if not os.path.exists(csv_path):
         print(f"Warning: CSV file not found at {csv_path}")
-        # Load sample data as fallback
-        LAWYERS = get_sample_data()
-        return
+        return lawyers
 
     try:
         with open(csv_path, 'r', encoding='utf-8') as f:
             # CSV is comma-delimited
             reader = csv.DictReader(f, delimiter=',')
 
-            for idx, row in enumerate(reader, 1):
+            for idx, row in enumerate(reader, starting_id):
                 first_name = row.get('First Name', '').strip()
                 last_name = row.get('Last Name', '').strip()
 
@@ -113,14 +111,35 @@ def load_lawyers_from_csv():
                     "website": ""  # Not in CSV
                 }
 
-                LAWYERS.append(lawyer)
+                lawyers.append(lawyer)
 
-        print(f"✅ Loaded {len(LAWYERS)} lawyers from CSV")
+        print(f"✅ Loaded {len(lawyers)} lawyers from {csv_filename}")
 
     except Exception as e:
-        print(f"Error loading CSV: {e}")
-        # Load sample data as fallback
+        print(f"Error loading {csv_filename}: {e}")
+
+    return lawyers
+
+def load_lawyers_from_csv():
+    """Load lawyer data from all CSV files"""
+    global LAWYERS
+    LAWYERS = []
+
+    # Load Los Angeles lawyers
+    la_lawyers = load_lawyers_from_csv_file("LA_Lsearch_Masterlist_LaborEmployment_updated.csv", starting_id=1)
+    LAWYERS.extend(la_lawyers)
+
+    # Load San Francisco lawyers - continue ID sequence
+    next_id = len(LAWYERS) + 1
+    sf_lawyers = load_lawyers_from_csv_file("Final_SFO_Lsearch_Masterlist_LaborEmployment_updated.csv", starting_id=next_id)
+    LAWYERS.extend(sf_lawyers)
+
+    # If no data loaded, use sample data
+    if len(LAWYERS) == 0:
+        print("Warning: No CSV files found, loading sample data")
         LAWYERS = get_sample_data()
+    else:
+        print(f"✅ Total: {len(LAWYERS)} lawyers loaded from all CSV files")
 
 def get_sample_data():
     """Return sample data if CSV is not available"""
