@@ -150,7 +150,7 @@ def load_lawyers_from_csv():
     ny_lawyers = load_lawyers_from_csv_file("NY_MandA_updated_FromCooley-Final.csv", starting_id=next_id)
     LAWYERS.extend(ny_lawyers)
 
-    # Load Chicago lawyers - continue ID sequence
+    # Load Chicago M&A lawyers - continue ID sequence
     next_id = len(LAWYERS) + 1
     chicago_lawyers = load_lawyers_from_csv_file("Chicago_MandA_Chicago_4-6y.csv", starting_id=next_id)
     LAWYERS.extend(chicago_lawyers)
@@ -159,6 +159,11 @@ def load_lawyers_from_csv():
     next_id = len(LAWYERS) + 1
     denver_lawyers = load_lawyers_from_csv_file("Denver_MandA_Denver_FD_3-6yrs-Finalized.csv", starting_id=next_id)
     LAWYERS.extend(denver_lawyers)
+
+    # Load Chicago IP Litigation lawyers - continue ID sequence
+    next_id = len(LAWYERS) + 1
+    chicago_ip_lawyers = load_lawyers_from_csv_file("Chicago_IPLitigation_2-5yrs_FD.csv", starting_id=next_id)
+    LAWYERS.extend(chicago_ip_lawyers)
 
     # If no data loaded, use sample data
     if len(LAWYERS) == 0:
